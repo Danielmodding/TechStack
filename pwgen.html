@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -111,10 +110,32 @@
             overflow: hidden;
         }
 
+        /* Verbesserte Button-Animation */
+        .password-display button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: left 0.7s ease;
+        }
+
         .password-display button:hover {
             background: rgb(61, 106, 255);
             border-color: rgb(61, 106, 255);
             box-shadow: 0 0 15px rgba(0, 142, 236, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .password-display button:hover::before {
+            left: 100%;
         }
 
         .password-options {
@@ -128,11 +149,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .option-row:hover {
+            transform: translateX(5px);
         }
 
         .option-row label {
             font-size: 14px;
             color: hsl(0 0% 80%);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .option-row:hover label {
+            color: hsl(0 0% 98%);
         }
 
         .length-slider {
@@ -143,6 +175,11 @@
             background: hsl(240 3.7% 20%);
             border-radius: 3px;
             outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .length-slider:hover {
+            background: hsl(240 3.7% 25%);
         }
 
         .length-slider::-webkit-slider-thumb {
@@ -152,12 +189,28 @@
             border-radius: 50%;
             background: hsl(217 91% 60%);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            position: relative;
         }
 
         .length-slider::-webkit-slider-thumb:hover {
             background: rgb(61, 106, 255);
             box-shadow: 0 0 10px rgba(0, 142, 236, 0.5);
+            animation: pulse 2s infinite;
+            transform: scale(1.2);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
         }
 
         .strength-meter {
@@ -166,12 +219,13 @@
             border-radius: 3px;
             margin-top: 8px;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .strength-fill {
             height: 100%;
             width: 0%;
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             border-radius: 3px;
         }
 
@@ -196,6 +250,7 @@
             color: hsl(0 0% 63.9%);
             margin-top: 8px;
             text-align: right;
+            transition: all 0.3s ease;
         }
 
         .generate-btn {
@@ -208,21 +263,69 @@
             font-weight: 600;
             font-size: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        /* Verbesserte Animation für den Generate-Button */
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: left 0.7s ease;
+        }
+
+        .generate-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
         }
 
         .generate-btn:hover {
             background: rgb(61, 106, 255);
             border-color: rgb(61, 106, 255);
-            box-shadow: 0 0 20px rgba(0, 142, 236, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 142, 236, 0.4);
+            transform: translateY(-3px) translateZ(0);
         }
 
+        .generate-btn:hover::before {
+            left: 100%;
+        }
+
+        .generate-btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .generate-btn:active {
+            transform: translateY(-1px) translateZ(0);
+            transition: all 0.1s ease;
+        }
+
+        /* Verbesserte Checkbox-Animationen */
         .checkbox {
             position: relative;
             width: 20px;
             height: 20px;
+            cursor: pointer;
         }
 
         .checkbox input {
@@ -240,15 +343,25 @@
             background-color: hsl(240 5.9% 10%);
             border: 1px solid hsl(240 3.7% 20%);
             border-radius: 4px;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .checkbox:hover .checkmark {
+            border-color: hsl(217 91% 60%);
+            transform: scale(1.1);
+            box-shadow: 0 0 8px rgba(0, 142, 236, 0.3);
         }
 
         .checkbox input:checked ~ .checkmark {
             background-color: hsl(217 91% 60%);
             border-color: hsl(217 91% 60%);
+            transform: scale(1.1);
+            box-shadow: 0 0 12px rgba(0, 142, 236, 0.5);
         }
 
-        .checkmark:after {
+        /* Ripple-Effekt für Checkboxen */
+        .checkmark::after {
             content: "";
             position: absolute;
             display: none;
@@ -259,15 +372,103 @@
             border: solid white;
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
+            z-index: 1;
         }
 
-        .checkbox input:checked ~ .checkmark:after {
+        .checkbox input:checked ~ .checkmark::after {
             display: block;
+            animation: checkmarkAppear 0.3s ease;
+        }
+
+        @keyframes checkmarkAppear {
+            0% {
+                transform: rotate(45deg) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: rotate(45deg) scale(1.2);
+            }
+            100% {
+                transform: rotate(45deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Puls-Effekt beim Aktivieren der Checkbox */
+        .checkbox input:checked ~ .checkmark::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+            100% {
+                width: 40px;
+                height: 40px;
+                opacity: 0;
+            }
         }
 
         .length-value {
             font-weight: 600;
             color: hsl(217 91% 60%);
+            transition: all 0.3s ease;
+        }
+
+        .length-slider:active ~ .option-row .length-value {
+            transform: scale(1.2);
+            color: hsl(217 91% 70%);
+        }
+
+        /* Zusätzliche Animation für den Copy-Button */
+        .copied-animation {
+            animation: copied 0.5s ease;
+        }
+
+        @keyframes copied {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 20px rgba(72, 187, 120, 0.6);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Fehlermeldung für den Fall, dass keine Option ausgewählt ist */
+        .error-message {
+            color: hsl(0 72% 51%);
+            font-size: 12px;
+            text-align: center;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
         }
 
         @media (max-width: 600px) {
@@ -281,6 +482,10 @@
             
             .password-display {
                 flex-direction: column;
+            }
+            
+            .option-row:hover {
+                transform: none;
             }
         }
     </style>
@@ -336,6 +541,8 @@
                     </label>
                 </div>
                 
+                <div class="error-message" id="errorMessage">Mindestens eine Option muss ausgewählt sein</div>
+                
                 <div class="strength-meter">
                     <div class="strength-fill" id="strengthFill"></div>
                 </div>
@@ -359,6 +566,7 @@
         const includeSymbols = document.getElementById('includeSymbols');
         const strengthFill = document.getElementById('strengthFill');
         const strengthLabel = document.getElementById('strengthLabel');
+        const errorMessage = document.getElementById('errorMessage');
 
         // Zeichensätze
         const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -374,7 +582,16 @@
 
         // Passwort generieren bei Änderung der Optionen
         [includeUppercase, includeLowercase, includeNumbers, includeSymbols].forEach(checkbox => {
-            checkbox.addEventListener('change', generatePassword);
+            checkbox.addEventListener('change', () => {
+                generatePassword();
+                // Fehlermeldung anzeigen/verstecken
+                if (!includeUppercase.checked && !includeLowercase.checked && 
+                    !includeNumbers.checked && !includeSymbols.checked) {
+                    errorMessage.classList.add('show');
+                } else {
+                    errorMessage.classList.remove('show');
+                }
+            });
         });
 
         // Passwort generieren bei Klick auf Button
@@ -382,19 +599,23 @@
 
         // Passwort kopieren
         copyButton.addEventListener('click', () => {
+            if (!passwordInput.value) return;
+            
             passwordInput.select();
             document.execCommand('copy');
             
-            // Temporäre Änderung des Button-Textes
+            // Verbesserte Animation für den Copy-Button
             const originalText = copyButton.textContent;
             copyButton.textContent = 'Kopiert!';
             copyButton.style.background = 'hsl(142 76% 36%)';
             copyButton.style.borderColor = 'hsl(142 76% 36%)';
+            copyButton.classList.add('copied-animation');
             
             setTimeout(() => {
                 copyButton.textContent = originalText;
                 copyButton.style.background = '';
                 copyButton.style.borderColor = '';
+                copyButton.classList.remove('copied-animation');
             }, 2000);
         });
 
@@ -412,10 +633,14 @@
             if (includeNumbers.checked) availableChars += numberChars;
             if (includeSymbols.checked) availableChars += symbolChars;
             
-            // Falls keine Zeichentypen ausgewählt sind, Kleinbuchstaben als Standard verwenden
+            // Falls keine Zeichentypen ausgewählt sind, Fehler anzeigen
             if (availableChars.length === 0) {
-                availableChars = lowercaseChars;
-                includeLowercase.checked = true;
+                passwordInput.value = '';
+                errorMessage.classList.add('show');
+                updatePasswordStrength('');
+                return;
+            } else {
+                errorMessage.classList.remove('show');
             }
             
             // Passwort generieren
