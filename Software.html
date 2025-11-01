@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Daniel Reim</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: hsl(240 10% 3.9%);
+            color: hsl(0 0% 98%);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            margin: 0 auto;
+            padding: 60px 64px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            margin-bottom: 48px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+            color: hsl(0 0% 98%);
+        }
+
+        .subtitle {
+            color: hsl(0 0% 63.9%);
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            align-items: center;
+            animation: slideUp 0.6s ease-out 0.1s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 320px;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: hsl(0 0% 63.9%);
+            transition: color 0.2s;
+            pointer-events: none;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: hsl(240 10% 3.9%);
+            border: 1px solid hsl(240 3.7% 15.9%);
+            border-radius: 8px;
+            color: hsl(0 0% 98%);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="text"]:hover {
+            border-color: hsl(240 3.7% 25%);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: hsl(217 91% 60%);
+            box-shadow: 0 0 0 3px hsl(217 91% 60% / 0.1);
+        }
+
+        input[type="text"]:focus ~ .search-icon {
+            color: hsl(217 91% 60%);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 6px;
+            background: hsl(240 3.7% 15.9% / 0.5);
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+        }
+
+        .filter-btn {
+            position: relative;
+            padding: 8px 18px;
+            border-radius: 7px;
+            border: 1px solid transparent;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            background: transparent;
+            color: hsl(0 0% 63.9%);
+            cursor: pointer;
+            font-family: inherit;
+            overflow: hidden;
+            box-shadow: 0 0 0 0 transparent;
+            transition: all 0.2s ease-in;
+        }
+
+        .filter-btn::before {
+            content: '';
+            display: block;
+            width: 0px;
+            height: 86%;
+            position: absolute;
+            top: 7%;
+            left: 0%;
+            opacity: 0;
+            background: #fff;
+            box-shadow: 0 0 50px 30px #fff;
+            transform: skewX(-20deg);
+        }
+
+        .filter-btn:hover {
+            color: #fff;
+            background: rgb(61, 106, 255);
+            border-color: rgb(61, 106, 255);
+            box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+            transition: all 0.2s ease-out;
+        }
+
+        .filter-btn:hover::before {
+            animation: sh02 0.5s 0s linear;
+        }
+
+        @keyframes sh02 {
+            from {
+                opacity: 0;
+                left: 0%;
+            }
+            50% {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                left: 100%;
+            }
+        }
+
+        .filter-btn:active {
+            box-shadow: 0 0 0 0 transparent;
+            transition: box-shadow 0.2s ease-in;
+        }
+
+        .filter-btn.active {
+            background: hsl(0 0% 98%);
+            color: hsl(240 10% 3.9%);
+            border-color: hsl(0 0% 98%);
+            box-shadow: 0 2px 8px hsl(0 0% 0% / 0.3);
+        }
+
+        .filter-btn.active:hover {
+            background: hsl(0 0% 98%);
+            color: hsl(240 10% 3.9%);
+            box-shadow: 0 4px 12px hsl(0 0% 0% / 0.4);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            perspective: 1000px;
+        }
+
+        .card-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            animation: fadeInScale 0.5s ease-out both;
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: hsl(240 3.7% 15.9%);
+            border-radius: 10px;
+            border: 1px solid hsl(240 3.7% 20%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1000px;
+            box-shadow: 0 0 0 0 transparent;
+            transition: all 0.4s ease-in;
+            cursor: pointer;
+        }
+
+        .card::before {
+            content: '';
+            display: block;
+            width: 0px;
+            height: 86%;
+            position: absolute;
+            top: 7%;
+            left: 0%;
+            opacity: 0;
+            background: #fff;
+            box-shadow: 0 0 30px 15px #fff;
+            transform: skewX(-20deg);
+            z-index: 1;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            border-color: rgb(61, 106, 255);
+            box-shadow: 0 0 20px 2px rgba(0, 142, 236, 0.4);
+            transition: all 0.4s ease-out;
+        }
+
+        .card:hover::before {
+            animation: sh02 0.5s 0s linear;
+        }
+
+        @keyframes sh02card {
+            from {
+                opacity: 0;
+                left: 0%;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            to {
+                opacity: 0;
+                left: 100%;
+            }
+        }
+
+        .card-image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .icon {
+            width: 64px;
+            height: 64px;
+            background: hsl(240 5.9% 10%);
+            border: 1px solid hsl(240 3.7% 20%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .card:hover .icon {
+            scale: 0;
+        }
+
+        .card-title-front {
+            font-size: 20px;
+            font-weight: 700;
+            color: hsl(0 0% 98%);
+            text-align: center;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card:hover .card-title-front {
+            scale: 0;
+        }
+
+        .card__content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background: hsl(240 3.7% 15.9%);
+            transform: rotateX(-90deg);
+            transform-origin: bottom;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover .card__content {
+            transform: rotateX(0deg);
+        }
+
+        .card__title {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: hsl(0 0% 98%);
+            font-weight: 700;
+        }
+
+        .card__category {
+            display: inline-block;
+            padding: 4px 10px;
+            background: hsl(217 91% 60% / 0.15);
+            border: 1px solid hsl(217 91% 60% / 0.3);
+            border-radius: 6px;
+            font-size: 11px;
+            color: hsl(217 91% 70%);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+
+        .card__description {
+            margin: 0 0 auto 0;
+            font-size: 13px;
+            color: hsl(0 0% 70%);
+            line-height: 1.5;
+        }
+
+        .card__button {
+            position: relative;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: hsl(217 91% 60%);
+            border: 1px solid hsl(217 91% 60%);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease-in;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 0 0 transparent;
+        }
+
+        .card__button::before {
+            content: '';
+            display: block;
+            width: 0px;
+            height: 86%;
+            position: absolute;
+            top: 7%;
+            left: 0%;
+            opacity: 0;
+            background: #fff;
+            box-shadow: 0 0 50px 30px #fff;
+            transform: skewX(-20deg);
+        }
+
+        .card__button:hover {
+            background: rgb(61, 106, 255);
+            border-color: rgb(61, 106, 255);
+            box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+            transition: all 0.2s ease-out;
+        }
+
+        .card__button:hover::before {
+            animation: sh02 0.5s 0s linear;
+        }
+
+        .card__button:active {
+            box-shadow: 0 0 0 0 transparent;
+            transition: box-shadow 0.2s ease-in;
+        }
+
+        .external-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 32px;
+            color: hsl(0 0% 63.9%);
+            font-size: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .filter-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Suche nach Tools...">
+                <svg class="search-icon" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">Alle</button>
+                <button class="filter-btn" data-category="Mail">Mail</button>
+                <button class="filter-btn" data-category="Dateien">Dateien</button>
+                <button class="filter-btn" data-category="Links">Links</button>
+                <button class="filter-btn" data-category="Text">Text</button>
+                <button class="filter-btn" data-category="Informationen">Info</button>
+                <button class="filter-btn" data-category="Software">Software</button>
+            </div>
+        </div>
+
+        <div class="grid" id="cardsContainer"></div>
+        <div class="no-results hidden" id="noResults">
+            Keine Ergebnisse gefunden
+        </div>
+    </div>
+
+    <script>
+        const tools = [
+            {
+                name: '10minmail',
+                category: 'Mail',
+                description: 'Temporäre E-Mail-Adresse für 10 Minuten - perfekt für einmalige Registrierungen',
+                url: 'https://10minemail.com/de/',
+                icon: 'https://logo.clearbit.com/10minemail.com'
+            },
+            {
+                name: 'Pairdrop',
+                category: 'Dateien',
+                description: 'Einfaches Teilen von Dateien zwischen Geräten im selben Netzwerk',
+                url: 'https://pairdrop.net/',
+                icon: 'https://pairdrop.net/images/favicon-96x96.png'
+            },
+            {
+                name: 'File.io',
+                category: 'Dateien',
+                description: 'Datei-Sharing mit automatischer Löschung nach dem ersten Download',
+                url: 'https://www.file.io/',
+                icon: 'https://logo.clearbit.com/file.io'
+            },
+            {
+                name: 'WeTransfer',
+                category: 'Dateien',
+                description: 'Zuverlässiger Datei-Transfer mit konfigurierbaren Einstellungen',
+                url: 'https://wetransfer.com/',
+                icon: 'https://logo.clearbit.com/wetransfer.com'
+            },
+            {
+                name: 'JustBeamIt',
+                category: 'Dateien',
+                description: 'Direktes Streaming von Dateien ohne Upload auf Server',
+                url: 'https://www.justbeamit.com/',
+                icon: 'https://logo.clearbit.com/justbeamit.com'
+            },
+            {
+                name: 'Tresorit Send',
+                category: 'Dateien',
+                description: 'Sicheres und verschlüsseltes Datei-Hosting - anonym Dateien teilen',
+                url: 'https://send.tresorit.com/',
+                icon: 'https://logo.clearbit.com/tresorit.com'
+            },
+            {
+                name: 'bit.ly',
+                category: 'Links',
+                description: 'URL-Verkürzer für kompakte und teilbare Links',
+                url: 'https://bit.ly/',
+                icon: 'https://logo.clearbit.com/bitly.com'
+            },
+            {
+                name: 'Short.io',
+                category: 'Links',
+                description: 'Professioneller Link-Shortener mit Branding-Optionen',
+                url: 'https://short.io/',
+                icon: 'https://logo.clearbit.com/short.io'
+            },
+            {
+                name: 'TinyURL',
+                category: 'Links',
+                description: 'Klassischer URL-Verkürzer - einfach und zuverlässig',
+                url: 'https://tinyurl.com/',
+                icon: 'https://logo.clearbit.com/tinyurl.com'
+            },
+            {
+                name: 'Cl1p.net',
+                category: 'Text',
+                description: 'Schnelles Teilen von Textnotizen über eindeutige URLs',
+                url: 'https://cl1p.net/',
+                icon: 'https://logo.clearbit.com/cl1p.net'
+            },
+            {
+                name: 'Hastebin',
+                category: 'Text',
+                description: 'Minimalistischer Pastebin für Code und Text',
+                url: 'https://www.toptal.com/developers/hastebin',
+                icon: 'https://logo.clearbit.com/toptal.com'
+            },
+            {
+                name: 'Rentry.co',
+                category: 'Text',
+                description: 'Markdown-Notizen speichern und teilen mit Formatierung',
+                url: 'https://rentry.co/',
+                icon: 'https://logo.clearbit.com/rentry.co'
+            },
+            {
+                name: 'ifconfig.me',
+                category: 'Informationen',
+                description: 'Zeigt deine öffentliche IP-Adresse und weitere Details',
+                url: 'https://ifconfig.me/',
+                icon: 'https://logo.clearbit.com/ifconfig.me'
+            },
+            {
+                name: 'Have I Been Pwned',
+                category: 'Informationen',
+                description: 'Prüfe, ob deine Daten in einem Datenleck waren',
+                url: 'https://haveibeenpwned.com/',
+                icon: 'https://logo.clearbit.com/haveibeenpwned.com'
+            },
+            {
+                name: 'VirusTotal',
+                category: 'Informationen',
+                description: 'Scanne Dateien und URLs auf Malware und Viren',
+                url: 'https://www.virustotal.com/',
+                icon: 'https://logo.clearbit.com/virustotal.com'
+            },
+            {
+                name: 'Notion',
+                category: 'Software',
+                description: 'All-in-One Workspace für Notizen, Projekte und Wikis',
+                url: 'https://www.notion.so/',
+                icon: 'https://logo.clearbit.com/notion.so'
+            },
+            {
+                name: 'Airtable',
+                category: 'Software',
+                description: 'Flexible Datenbank-Plattform mit Spreadsheet-Interface',
+                url: 'https://www.airtable.com/',
+                icon: 'https://logo.clearbit.com/airtable.com'
+            },
+            {
+                name: 'Draw.io',
+                category: 'Software',
+                description: 'Kostenlose Diagramm- und Flowchart-Software',
+                url: 'https://www.drawio.com/',
+                icon: 'https://logo.clearbit.com/diagrams.net'
+            },
+            {
+                name: 'ZimaOS',
+                category: 'Software',
+                description: 'Personal Cloud Operating System für dein Zuhause',
+                url: 'https://www.zimaspace.com/',
+                icon: 'https://logo.clearbit.com/zimaspace.com'
+            },
+            {
+                name: 'GitHub',
+                category: 'Software',
+                description: 'Code-Hosting und Versionskontrolle für Entwickler',
+                url: 'https://github.com/',
+                icon: 'https://logo.clearbit.com/github.com'
+            },
+            {
+                name: 'Figma',
+                category: 'Software',
+                description: 'Kollaboratives Design-Tool für UI/UX und Prototyping',
+                url: 'https://www.figma.com/',
+                icon: 'https://logo.clearbit.com/figma.com'
+            },
+            {
+                name: 'Excalidraw',
+                category: 'Software',
+                description: 'Virtuelles Whiteboard für handgezeichnete Diagramme',
+                url: 'https://excalidraw.com/',
+                icon: 'https://logo.clearbit.com/excalidraw.com'
+            },
+            {
+                name: 'Stirling PDF',
+                category: 'Software',
+                description: 'Umfassende PDF-Bearbeitungs-Suite - lokal und privat',
+                url: 'https://stirlingpdf.io/',
+                icon: 'https://logo.clearbit.com/stirlingpdf.io'
+            },
+            {
+                name: 'TickTick',
+                category: 'Software',
+                description: 'Aufgabenverwaltung und To-Do-Listen mit Kalenderfunktion',
+                url: 'https://ticktick.com/',
+                icon: 'https://logo.clearbit.com/ticktick.com'
+            },
+            {
+                name: 'Google Calendar',
+                category: 'Software',
+                description: 'Online-Kalender für Termine und Ereignisplanung',
+                url: 'https://calendar.google.com/',
+                icon: 'https://logo.clearbit.com/google.com'
+            },
+            {
+                name: 'Miro',
+                category: 'Software',
+                description: 'Kollaboratives Online-Whiteboard für Teams',
+                url: 'https://miro.com/de/',
+                icon: 'https://logo.clearbit.com/miro.com'
+            }
+        ];
+
+        function createCard(tool, index) {
+            const domain = new URL(tool.url).hostname;
+            const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+            
+            return `
+                <div class="card-container" style="--index: ${index}" data-category="${tool.category}">
+                    <div class="card">
+                        <div class="card-image">
+                            <div class="icon">
+                                <img src="${faviconUrl}" alt="${tool.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22hsl(217 91%25 60%25)%22%3E%3Cpath d=%22M13 9h5.5L13 3.5V9M6 2h8l6 6v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4c0-1.11.89-2 2-2m0 18h12v-8H6v8z%22/%3E%3C/svg%3E'">
+                            </div>
+                            <h3 class="card-title-front">${tool.name}</h3>
+                        </div>
+                        <div class="card__content">
+                            <h3 class="card__title">${tool.name}</h3>
+                            <span class="card__category">${tool.category}</span>
+                            <p class="card__description">${tool.description}</p>
+                            <a href="${tool.url}" target="_blank" class="card__button" onclick="event.stopPropagation()">
+                                Tool öffnen
+                                <svg class="external-icon" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72z"/>
+                                    <path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCards(toolsToRender) {
+            const container = document.getElementById('cardsContainer');
+            const noResults = document.getElementById('noResults');
+            
+            if (toolsToRender.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+            } else {
+                container.innerHTML = toolsToRender.map((tool, index) => createCard(tool, index)).join('');
+                noResults.classList.add('hidden');
+            }
+        }
+
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        function filterTools() {
+            let filtered = tools;
+            
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(tool => tool.category === currentCategory);
+            }
+            
+            if (searchQuery) {
+                filtered = filtered.filter(tool => 
+                    tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    tool.category.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
+            
+            renderCards(filtered);
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCategory = e.target.dataset.category;
+                filterTools();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            filterTools();
+        });
+
+        renderCards(tools);
+    </script>
+</body>
+</html>
