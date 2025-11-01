@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Header-Bereich mit Suchleiste und Filtern -->
+    <div class="header">
         <div class="controls">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Suche nach Tools...">
@@ -26,7 +27,10 @@
                 <button class="filter-btn" data-category="Software">Software</button>
             </div>
         </div>
+    </div>
 
+    <!-- Hauptcontainer mit den Tool-Karten -->
+    <div class="container">
         <div class="grid" id="cardsContainer"></div>
         <div class="no-results hidden" id="noResults">
             Keine Ergebnisse gefunden
